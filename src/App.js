@@ -24,7 +24,7 @@ function App(props) {
         window.desktop ? require("./Data/users.json") : us
     );
     const [userD, setUserD] = useState();
-    const [status] = useState(false); // Change it to true for Online Store
+    const [status] = useState(navigator.onLine); // Change it to true for Online Store
 
     useEffect(() => {
         async function reading() {
