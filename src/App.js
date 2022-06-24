@@ -31,18 +31,22 @@ function App(props) {
             if (status) {
                 if (require("./Data/users.json").length === 0) {
                     console.log("it comes here");
-                    await axios.get("/posts").then(async (item) => {
-                        await window.api.allpostadd(item.data);
-                    });
-                    await axios.get("/users").then(async (item) => {
-                        allusers(item.data);
-                        await window.api.allusersadd(item.data);
-                    });
+                    await axios
+                        .get("https://twilio007.herokuapp.com/posts")
+                        .then(async (item) => {
+                            await window.api.allpostadd(item.data);
+                        });
+                    await axios
+                        .get("https://twilio007.herokuapp.com/users")
+                        .then(async (item) => {
+                            allusers(item.data);
+                            await window.api.allusersadd(item.data);
+                        });
                 } else {
                     await posts.forEach(async function (post, index) {
                         if (Object.keys(post).includes("userUuid")) {
                             await axios
-                                .post("/posts", {
+                                .post("https://twilio007.herokuapp.com/posts", {
                                     userUuid: post.userUuid,
                                     body: post.body,
                                 })
@@ -93,8 +97,12 @@ function App(props) {
         }
         async function webread() {
             if (pos.length === 0) {
-                await axios.get("/posts").then((post) => allpos(post.data));
-                await axios.get("/users").then((u) => allusers(u.data));
+                await axios
+                    .get("https://twilio007.herokuapp.com/posts")
+                    .then((post) => allpos(post.data));
+                await axios
+                    .get("https://twilio007.herokuapp.com/users")
+                    .then((u) => allusers(u.data));
             }
         }
         if (window.desktop) {

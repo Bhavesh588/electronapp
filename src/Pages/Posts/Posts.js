@@ -15,7 +15,7 @@ function Posts({ postData, userD, status, setPostData }) {
             if (window.desktop) {
                 if (status) {
                     await axios
-                        .post("/posts", {
+                        .post("https://twilio007.herokuapp.com/posts", {
                             userUuid: userD.uuid,
                             body: body,
                         })
@@ -45,7 +45,7 @@ function Posts({ postData, userD, status, setPostData }) {
                 }
             } else {
                 await axios
-                    .post("/posts", {
+                    .post("https://twilio007.herokuapp.com/posts", {
                         userUuid: userD.uuid,
                         body: body,
                     })
