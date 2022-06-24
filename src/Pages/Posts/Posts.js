@@ -1,11 +1,14 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 import "./Posts.scss";
 
-function Posts({ postData, userD, status, setPostData }) {
+function Posts({ postData, userD, status, setPostData, ...props }) {
     // console.log(postData);
+
+    const { allpos } = props;
     const [body, setBody] = useState("");
     const [err, setErr] = useState(false);
 
@@ -58,6 +61,7 @@ function Posts({ postData, userD, status, setPostData }) {
                             user: userD,
                         };
                         setPostData([...postData, p]);
+                        allpos([...postData, p]);
                         setBody("");
                     })
                     .catch((err) => console.log("Error Creating Post: ", err));
@@ -120,4 +124,15 @@ function Posts({ postData, userD, status, setPostData }) {
     );
 }
 
-export default Posts;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        allpos: (val) => {
+            dispatch({
+                type: "POSTS",
+                item: val,
+            });
+        },
+    };
+};
+
+export default connect(null, mapDispatchToProps)(Posts);
