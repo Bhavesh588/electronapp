@@ -1,0 +1,41 @@
+
+.App {
+	width: 100%;
+	
+	.wrapper_app{
+		display: flex;
+		text-decoration: none;
+		width: 100%;
+		transition: all 0.3s;
+    }
+
+	.connection_status {
+		background-color: rgba($color: #000000, $alpha: 0.9);
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 20px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
