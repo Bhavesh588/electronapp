@@ -8,7 +8,7 @@ import "./Posts.scss";
 function Posts({ postData, userD, status, setPostData, ...props }) {
     // console.log(postData);
 
-    const { allpos } = props;
+    const { pos, allpos } = props;
     const [body, setBody] = useState("");
     const [err, setErr] = useState(false);
 
@@ -30,7 +30,9 @@ function Posts({ postData, userD, status, setPostData, ...props }) {
                                 updatedAt: item.data.updatedAt,
                                 user: userD,
                             };
-                            await window.api.postfile(p);
+                            var postadd = [...pos, p];
+                            await window.api.addData(postadd, "posts");
+                            allpos(postadd);
                             setBody("");
                         })
                         .catch((err) =>
@@ -43,7 +45,9 @@ function Posts({ postData, userD, status, setPostData, ...props }) {
                         body: body,
                         user: userD,
                     };
-                    await window.api.postfile(p);
+                    var postadd = [...pos, p];
+                    await window.api.addData(postadd, "posts");
+                    allpos(postadd);
                     setBody("");
                 }
             } else {
@@ -124,6 +128,12 @@ function Posts({ postData, userD, status, setPostData, ...props }) {
     );
 }
 
+const mapStateToProps = (state) => {
+    return {
+        pos: state.posts,
+    };
+};
+
 const mapDispatchToProps = (dispatch) => {
     return {
         allpos: (val) => {
@@ -135,4 +145,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(null, mapDispatchToProps)(Posts);
+export default connect(mapStateToProps, mapDispatchToProps)(Posts);

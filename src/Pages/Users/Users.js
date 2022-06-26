@@ -9,9 +9,14 @@ function Users({ user, ...props }) {
     const { us, allusers } = props;
 
     useEffect(() => {
-        if (window.desktop) {
-            allusers(require("../../Data/users.json"));
+        async function usersData() {
+            if (window.desktop) {
+                // await window.api
+                //     .getAllData("users")
+                //     .then((item) => allusers(item));
+            }
         }
+        usersData();
     }, [us, allusers]);
     return (
         <div className="users">

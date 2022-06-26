@@ -17,81 +17,78 @@ function App(props) {
     const { pos, allpos, us, allusers } = props;
 
     const [postData, setPostData] = useState([]);
-    const [posts, setPosts] = useState(
-        window.desktop ? require("./Data/posts.json") : pos
-    );
-    const [users] = useState(
-        window.desktop ? require("./Data/users.json") : us
-    );
+    // const [posts, setPosts] = useState(pos);
+    // const [users] = useState(us);
     const [userD, setUserD] = useState();
-    const [status] = useState(navigator.onLine); // Change it to true for Online Store
+    const [status] = useState(true); // Change it to true for Online Store
 
     useEffect(() => {
         async function reading() {
+            var d = [];
+            await window.api.getAllData("posts").then((item) => (d = item));
+            if (pos.length === 0 || us.length === 0) {
+                allpos(d.posts);
+                allusers(d.users);
+            }
             if (status) {
-                if (require("./Data/users.json").length === 0) {
+                if (d.posts.length === 0 || d.users.length === 0) {
                     console.log("it comes here");
                     await axios
                         .get("https://twilio007.herokuapp.com/posts")
                         .then(async (item) => {
-                            await window.api.allpostadd(item.data);
+                            await window.api.addData(item.data, "posts");
+                            await window.api
+                                .getAllData("posts")
+                                .then((item) => allpos(item.posts));
                         });
                     await axios
                         .get("https://twilio007.herokuapp.com/users")
                         .then(async (item) => {
-                            allusers(item.data);
-                            await window.api.allusersadd(item.data);
+                            await window.api.addData(item.data, "users");
+                            await window.api
+                                .getAllData("users")
+                                .then((item) => allusers(item.users));
                         });
                 } else {
-                    await posts.forEach(async function (post, index) {
-                        if (Object.keys(post).includes("userUuid")) {
-                            await axios
-                                .post("https://twilio007.herokuapp.com/posts", {
-                                    userUuid: post.userUuid,
-                                    body: post.body,
-                                })
-                                .then(async (item) => {
-                                    var p = {
-                                        uuid: item.data.uuid,
-                                        body: item.data.body,
-                                        createdAt: item.data.createdAt,
-                                        updatedAt: item.data.updatedAt,
-                                        user: post.user,
-                                    };
-                                    posts.splice(index, 1);
-                                    posts[index] = p;
-                                    await window.api.allpostadd(posts);
-                                })
-                                .catch((err) => {
-                                    console.log("Useffect Post Error: ", err);
-                                });
+                    await pos.forEach(async function (post, index) {
+                        if (Object.keys(post)) {
+                            if (Object.keys(post).includes("userUuid")) {
+                                await axios
+                                    .post(
+                                        "https://twilio007.herokuapp.com/posts",
+                                        {
+                                            userUuid: post.userUuid,
+                                            body: post.body,
+                                        }
+                                    )
+                                    .then(async (item) => {
+                                        var p = {
+                                            uuid: item.data.uuid,
+                                            body: item.data.body,
+                                            createdAt: item.data.createdAt,
+                                            updatedAt: item.data.updatedAt,
+                                            user: post.user,
+                                        };
+                                        pos.splice(index, 1);
+                                        pos[index] = p;
+                                        await window.api.addData(pos, "posts");
+                                        allpos(pos);
+                                        // await window.api
+                                        //     .getAllData("posts")
+                                        //     .then((item) => allpos(item));
+                                    })
+                                    .catch((err) => {
+                                        console.log(
+                                            "Useffect Post Error: ",
+                                            err
+                                        );
+                                    });
+                                // await window.api
+                                //     .getAllData("posts")
+                                //     .then((item) => setPosts(item));
+                            }
                         }
                     });
-                    // await axios
-                    //     .get("http://localhost:5000/users")
-                    //     .then((online_users) => {
-                    //         users.forEach(async function (user) {
-                    //             let flag = 0;
-                    //             online_users.data.forEach(function (item) {
-                    //                 if (user.email === item.email) {
-                    //                     flag = 1;
-                    //                     return;
-                    //                 }
-                    //             });
-                    //             if (flag === 0) {
-                    //                 await axios.post(
-                    //                     "http://localhost:5000/users",
-                    //                     {
-                    //                         name: user.name,
-                    //                         email: user.email,
-                    //                     }
-                    //                 );
-                    //             }
-                    //         });
-                    //     });
-
-                    // allpos(posts);
-                    // allusers(users);
                 }
             }
         }
@@ -107,13 +104,13 @@ function App(props) {
         }
         if (window.desktop) {
             reading();
-            setPosts(require("./Data/posts.json"));
-            allpos(require("./Data/posts.json"));
+            // setPosts(pos);
+            // allpos(require("./Data/posts.json"));
             if (userD) {
                 var p = [];
-                for (let i = 0; i < posts.length; i++) {
-                    if (posts[i].user.uuid === userD.uuid) {
-                        p.push(posts[i]);
+                for (let i = 0; i < pos.length; i++) {
+                    if (pos[i].user.uuid === userD.uuid) {
+                        p.push(pos[i]);
                     }
                 }
                 setPostData(p);
@@ -121,7 +118,7 @@ function App(props) {
         } else {
             webread();
         }
-    }, [userD, posts, status, allpos, pos, users, allusers]);
+    }, [userD, status, allpos, pos, us, allusers]);
 
     const user = (data) => {
         var p = [];
