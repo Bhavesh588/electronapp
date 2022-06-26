@@ -24,15 +24,11 @@ function App(props) {
 
     useEffect(() => {
         async function reading() {
-            var d = [];
-            await window.api.getAllData("posts").then((item) => (d = item));
-            if (pos.length === 0 || us.length === 0) {
-                allpos(d.posts);
-                allusers(d.users);
-            }
+            // var d = [];
+            // await window.api.getAllData("posts").then((item) => (d = item));
             if (status) {
-                if (d.posts.length === 0 || d.users.length === 0) {
-                    console.log("it comes here");
+                if (pos.length === 0 || us.length === 0) {
+                    // console.log("it comes here");
                     await axios
                         .get("https://twilio007.herokuapp.com/posts")
                         .then(async (item) => {
@@ -166,7 +162,7 @@ function App(props) {
             <div className="wrapper_app">
                 {/* prettier-ignore */}
                 <Routes>
-                    <Route path='/' element={
+                    <Route exact path='/' element={
                         <Suspense fallback={<div className="load"><div style={{width: '100px'}}><img src={loader} alt="loader" style={{width: '100%'}} /></div></div>}>
                             <Users user={user} status={status} />
                         </Suspense>
