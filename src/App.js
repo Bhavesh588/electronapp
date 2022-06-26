@@ -20,7 +20,7 @@ function App(props) {
     // const [posts, setPosts] = useState(pos);
     // const [users] = useState(us);
     const [userD, setUserD] = useState();
-    const [status] = useState(true); // Change it to true for Online Store
+    const [status] = useState(navigator.onLine); // Change it to true for Online Store
 
     useEffect(() => {
         async function reading() {
