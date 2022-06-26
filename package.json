@@ -23,6 +23,7 @@
     "web-vitals": "^2.1.4"
   },
   "main": "public/main.js",
+  "homepage": "./",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
