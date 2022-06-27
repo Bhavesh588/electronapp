@@ -188,7 +188,27 @@ function App(props) {
                     </div>
                 ) : null
             ) : null}
-            <h4>Good Evening, I am {status ? "Online" : "Offline"} Sir</h4>
+            <div className="d-flex justify-content-between">
+                <div>
+                    <h4>
+                        Good Evening, I am {status ? "Online" : "Offline"} Sir
+                    </h4>
+                </div>
+                {window.desktop ? null : (
+                    <div>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() =>
+                                window.open(
+                                    "https://drive.google.com/file/d/1OzeJPIQMiNqJ5wGqHftdBfluvL45usc2/view?usp=sharing"
+                                )
+                            }
+                        >
+                            Download App
+                        </button>
+                    </div>
+                )}
+            </div>
             <div className="wrapper_app">
                 {/* prettier-ignore */}
                 <Routes>
