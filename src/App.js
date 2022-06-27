@@ -20,71 +20,101 @@ function App(props) {
     // const [posts, setPosts] = useState(pos);
     // const [users] = useState(us);
     const [userD, setUserD] = useState();
+    const [loop, setLoop] = useState(true);
     const [status] = useState(navigator.onLine); // Change it to true for Online Store
 
     useEffect(() => {
         async function reading() {
-            // var d = [];
-            // await window.api.getAllData("posts").then((item) => (d = item));
+            var d = [];
+            await window.api.getAllData("posts").then((item) => (d = item));
             if (status) {
                 if (pos.length === 0 || us.length === 0) {
-                    // console.log("it comes here");
+                    console.log("it comes here");
                     await axios
                         .get("https://twilio007.herokuapp.com/posts")
                         .then(async (item) => {
-                            await window.api.addData(item.data, "posts");
-                            await window.api
-                                .getAllData("posts")
-                                .then((item) => allpos(item.posts));
+                            allpos(item.data);
+                            // await window.api.addData(item.data, "posts");
+                            // await window.api
+                            //     .getAllData("posts")
+                            //     .then((item) => allpos(item.posts));
                         });
                     await axios
                         .get("https://twilio007.herokuapp.com/users")
                         .then(async (item) => {
-                            await window.api.addData(item.data, "users");
-                            await window.api
-                                .getAllData("users")
-                                .then((item) => allusers(item.users));
+                            allusers(item.data);
+                            // await window.api.addData(item.data, "users");
+                            // await window.api
+                            //     .getAllData("users")
+                            //     .then((item) => allusers(item.users));
                         });
                 } else {
-                    await pos.forEach(async function (post, index) {
-                        if (Object.keys(post)) {
-                            if (Object.keys(post).includes("userUuid")) {
-                                await axios
-                                    .post(
-                                        "https://twilio007.herokuapp.com/posts",
-                                        {
-                                            userUuid: post.userUuid,
-                                            body: post.body,
-                                        }
-                                    )
-                                    .then(async (item) => {
-                                        var p = {
-                                            uuid: item.data.uuid,
-                                            body: item.data.body,
-                                            createdAt: item.data.createdAt,
-                                            updatedAt: item.data.updatedAt,
-                                            user: post.user,
-                                        };
-                                        pos.splice(index, 1);
-                                        pos[index] = p;
-                                        await window.api.addData(pos, "posts");
-                                        allpos(pos);
+                    // console.log("its down here");
+                    if (loop) {
+                        if (d.posts) {
+                            if (d.posts.length < pos.length) {
+                                await window.api.addData(pos, "posts");
+                            }
+                            await d.posts.forEach(async function (post, index) {
+                                if (Object.keys(post)) {
+                                    if (
+                                        Object.keys(post).includes("userUuid")
+                                    ) {
+                                        await axios
+                                            .post(
+                                                "https://twilio007.herokuapp.com/posts",
+                                                {
+                                                    userUuid: post.userUuid,
+                                                    body: post.body,
+                                                }
+                                            )
+                                            .then(async (item) => {
+                                                var p = {
+                                                    uuid: item.data.uuid,
+                                                    body: item.data.body,
+                                                    createdAt:
+                                                        item.data.createdAt,
+                                                    updatedAt:
+                                                        item.data.updatedAt,
+                                                    user: post.user,
+                                                };
+                                                var dpos = d.posts;
+                                                dpos.splice(index, 1);
+                                                dpos[index] = p;
+                                                await window.api.addData(
+                                                    dpos,
+                                                    "posts"
+                                                );
+                                                allpos(dpos);
+                                                // await window.api
+                                                //     .getAllData("posts")
+                                                //     .then((item) => allpos(item));
+                                            })
+                                            .catch((err) => {
+                                                console.log(
+                                                    "Useffect Post Error: ",
+                                                    err
+                                                );
+                                            });
                                         // await window.api
                                         //     .getAllData("posts")
-                                        //     .then((item) => allpos(item));
-                                    })
-                                    .catch((err) => {
-                                        console.log(
-                                            "Useffect Post Error: ",
-                                            err
-                                        );
-                                    });
-                                // await window.api
-                                //     .getAllData("posts")
-                                //     .then((item) => setPosts(item));
-                            }
+                                        //     .then((item) => setPosts(item));
+                                    }
+                                }
+                            });
+                        } else {
+                            await window.api.addData(pos, "posts");
+                            await window.api.addData(us, "users");
                         }
-                    });
+                        setLoop(false);
+                    }
+                }
+            } else {
+                if (pos.length === 0 || us.length === 0) {
+                    if (d.posts) {
+                        allpos(d.posts);
+                        allusers(d.users);
+                    }
                 }
             }
         }
@@ -114,7 +144,7 @@ function App(props) {
         } else {
             webread();
         }
-    }, [userD, status, allpos, pos, us, allusers]);
+    }, [userD, status, allpos, pos, us, allusers, loop]);
 
     const user = (data) => {
         var p = [];
